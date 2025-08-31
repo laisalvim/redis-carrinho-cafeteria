@@ -34,7 +34,7 @@ Siga os passos abaixo para configurar e rodar o projeto em seu ambiente local.
   apk update
   apk add redis
   redis-server --protected-mode no &
-  redis-cli ping   # deve responder PONG
+  redis-cli ping 
 
 3. **Instale as dependências:**
 npm install
