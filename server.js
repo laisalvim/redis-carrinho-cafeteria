@@ -3,7 +3,8 @@ const { createClient } = require('redis');
 
 const app = express();
 app.use(express.json());
-app.use(express.static('public'));
+
+app.use(express.static(__dirname));
 
 const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
 const REDIS_PORT = parseInt(process.env.REDIS_PORT || '6379', 10);
@@ -17,7 +18,6 @@ app.get('/health', async (_req, res) => {
   catch (e) { res.status(500).json({ ok: false, error: e.message }); }
 });
 
-// Lê SKUs da List e monta os itens do cardápio a partir dos Hashes prod:*
 app.get('/menu', async (_req, res) => {
   try {
     const skus = await redis.lRange('menu:itens', 0, -1);
@@ -27,12 +27,10 @@ app.get('/menu', async (_req, res) => {
       items.push({ sku, nome: data.nome, preco: parseFloat(data.preco), img: data.img });
     }
     res.json({ items });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Adiciona/incrementa item no carrinho (Hash cart:{sid}:items)
+// ADD no carrinho
 app.post('/cart/add', async (req, res) => {
   const { sid, sku, qtd } = req.body || {};
   if (!sid || !sku) return res.status(400).json({ error: 'sid e sku são obrigatórios' });
@@ -40,14 +38,12 @@ app.post('/cart/add', async (req, res) => {
   const key = `cart:${sid}:items`;
   try {
     await redis.hIncrBy(key, sku, n);
-    await redis.expire(key, 1800); // 30min
+    await redis.expire(key, 1800); // 30 min
     res.json({ ok: true, cart: await redis.hGetAll(key) });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Decrementa; se zerar, remove o campo
+// DEC no carrinho 
 app.post('/cart/dec', async (req, res) => {
   const { sid, sku, qtd } = req.body || {};
   if (!sid || !sku) return res.status(400).json({ error: 'sid e sku são obrigatórios' });
@@ -58,12 +54,10 @@ app.post('/cart/dec', async (req, res) => {
     if (after <= 0) await redis.hDel(key, sku);
     await redis.expire(key, 1800);
     res.json({ ok: true, cart: await redis.hGetAll(key) });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Retorna carrinho com subtotais e total
+// GET carrinho com subtotais e total
 app.get('/cart', async (req, res) => {
   const { sid } = req.query;
   if (!sid) return res.status(400).json({ error: 'sid é obrigatório' });
@@ -73,7 +67,6 @@ app.get('/cart', async (req, res) => {
     const raw = await redis.hGetAll(key);
     const items = [];
     let total = 0;
-
     for (const [sku, qtyStr] of Object.entries(raw)) {
       const qty = parseInt(qtyStr, 10);
       const prod = await redis.hGetAll(`prod:${sku}`);
@@ -82,14 +75,11 @@ app.get('/cart', async (req, res) => {
       total += subtotal;
       items.push({ sku, nome: prod.nome, preco, qtd: qty, subtotal: parseFloat(subtotal.toFixed(2)) });
     }
-
     res.json({ items, total: parseFloat(total.toFixed(2)) });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Limpa carrinho
+// Limpar carrinho
 app.post('/cart/clear', async (req, res) => {
   const { sid } = req.body || {};
   if (!sid) return res.status(400).json({ error: 'sid é obrigatório' });
@@ -97,7 +87,6 @@ app.post('/cart/clear', async (req, res) => {
   res.json({ ok: true });
 });
 
-// Sobe servidor e conecta no Redis
 app.listen(PORT, async () => {
   await redis.connect();
   console.log('Redis conectado?', redis.isOpen);
