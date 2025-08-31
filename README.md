@@ -1,6 +1,6 @@
 # NoSQL - Carrinho de Compras
 
-Este projeto é um exercício prático que demonstra o uso do **Redis** como um banco
+Este projeto é um exercício **Redis** como um banco
 de dados NoSQL para gerenciar um carrinho de compras de uma cafeteria online.  
 A aplicação permite que os usuários visualizem um cardápio, adicionem itens ao
 carrinho e consultem o total, tudo integrado ao Redis.
@@ -13,7 +13,7 @@ As principais estruturas de dados aplicadas foram:
 
 ---
 
-## Como Rodar o Projeto
+## Como Rodar o projeto
 
 Siga os passos abaixo para configurar e rodar o projeto em seu ambiente local.
 
