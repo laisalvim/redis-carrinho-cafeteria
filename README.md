@@ -1,23 +1,48 @@
-# carrinho de compras
-## 1) Arquitetura e papéis
-- **Client**: `public/index.html` (HTML/CSS/JS simples).
-- **Server**: `server.js` (rotas REST).
-- **Database**: armazena catálogo e carrinho.
+# NoSQL - Carrinho de Compras ☕
 
-## 2) Estruturas no Redis 
-- **catálogo (Hash por produto)**: `prod:{sku}`  
-  Campos: `nome`, `preco`, `img`  
-- **ordem do cardápio (List)**: `menu:itens`  
-  Contém SKUs na ordem exibida no front.
-- **Carrinho por sessão (Hash)**: `cart:{sid}:items`  
-  Mapeia `sku -> quantidade` com **TTL** (`EXPIRE 1800`).
+Este projeto é um exercício prático que demonstra o uso do **Redis** como um banco
+de dados NoSQL para gerenciar um carrinho de compras de uma cafeteria online.  
+A aplicação permite que os usuários visualizem um cardápio, adicionem itens ao
+carrinho e consultem o total, tudo integrado ao Redis.
+
+O Redis foi utilizado para armazenar os dados do cardápio e do carrinho de compras.  
+As principais estruturas de dados aplicadas foram:
+- **Hash** → detalhes de cada produto (nome, preço, imagem)  
+- **List** → ordem do cardápio exibido  
+- **Hash por sessão** → carrinho de cada usuário, com expiração automática (TTL)  
 
 ---
-## 3) Rodando no Play with Docker
 
-### Nó 1 — Redis
-```sh
-apk add redis
-redis-server --protected-mode no &
-redis-cli ping
-# anote o IP deste nó (ex.: 192.168.0.19)
+## Como Rodar o Projeto
+
+Siga os passos abaixo para configurar e rodar o projeto em seu ambiente local.
+
+### Pré-requisitos
+
+- [Node.js](https://nodejs.org/)
+- [Redis](https://redis.io/) (pode ser rodado em contêiner local ou no **Play with Docker**)
+
+### Passos
+
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/laisalvim/redis-carrinho-cafeteria
+   cd redis-carrinho-cafeteria
+
+2. **Suba o Redis (exemplo com Play with Docker):**
+   ```bash
+  apk update
+  apk add redis
+  redis-server --protected-mode no &
+  redis-cli ping   # deve responder PONG
+
+3. **Instale as dependências:**
+npm install
+
+4. **Popule o catálogo inicial:**
+sh seed.sh
+
+5. **Inicie o servidor:**
+npm start
+
+A aplicação rodará em http://localhost:3000
