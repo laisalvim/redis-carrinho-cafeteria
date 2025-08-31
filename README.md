@@ -31,10 +31,10 @@ Siga os passos abaixo para configurar e rodar o projeto em seu ambiente local.
 
 2. **Suba o Redis (exemplo com Play with Docker):**
    ```bash
-  apk update
-  apk add redis
-  redis-server --protected-mode no &
-  redis-cli ping 
+   apk update
+   apk add redis
+   redis-server --protected-mode no &
+   redis-cli ping 
 
 3. **Instale as dependências:**
 npm install
