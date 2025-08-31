@@ -1,4 +1,4 @@
-# NoSQL - Carrinho de Compras ☕
+# NoSQL - Carrinho de Compras
 
 Este projeto é um exercício prático que demonstra o uso do **Redis** como um banco
 de dados NoSQL para gerenciar um carrinho de compras de uma cafeteria online.  
