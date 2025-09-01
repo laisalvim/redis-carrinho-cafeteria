@@ -6,11 +6,6 @@ A aplicação permite que os usuários visualizem um cardápio e adicionem itens
 carrinho, tudo integrado ao Redis.
 
 O Redis foi utilizado para armazenar os dados do cardápio e do carrinho de compras.  
-As principais estruturas de dados aplicadas foram:
-- **Hash** → detalhes de cada produto (nome, preço, imagem)  
-- **List** → ordem do cardápio exibido  
-- **Hash por sessão** → carrinho de cada usuário, com expiração automática (TTL)  
-
 ---
 
 ## Como Rodar o projeto
