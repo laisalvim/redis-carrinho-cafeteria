@@ -1,10 +1,13 @@
+const path = require('path');
 const express = require('express');
 const { createClient } = require('redis');
 
 const app = express();
 app.use(express.json());
 
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'src')));
+app.use('/img', express.static(path.join(__dirname, 'img')));
+app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'src', 'index.html')));
 
 const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
 const REDIS_PORT = parseInt(process.env.REDIS_PORT || '6379', 10);
@@ -55,6 +58,16 @@ app.post('/cart/dec', async (req, res) => {
     await redis.expire(key, 1800);
     res.json({ ok: true, cart: await redis.hGetAll(key) });
   } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/pedido', async (req, res) => {
+  const itens = req.body?.itens;
+  if (!Array.isArray(itens) || itens.length === 0) {
+    return res.status(400).json({ error: 'Envie {"itens":[...]} com ao menos 1 item' });
+  }
+  // só pra resposta rápida, sem salvar no Redis por enquanto
+  console.log('Pedido recebido:', itens);
+  return res.status(201).json({ ok: true, itens });
 });
 
 // GET carrinho com subtotais e total

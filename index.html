@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cafeteria</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="menu">
+        <h1>Cafés</h1>
+
+        <div class="item">
+            <img src="/./img/super_coffee.png" alt="Super Coffee">
+            <div class="item-info">
+                <h3>Super Coffee</h3>
+                <span class="price" data-price="4.50">R$ 4.50</span>
+            </div>
+            <input type="number" min="0" value="0" class="qty">
+        </div>
+
+        <div class="item">
+            <img src="/./img/mocha_delicious.png" alt="Mocha Delicious">
+            <div class="item-info">
+                <h3>Mocha Delicious</h3>
+                <span class="price" data-price="4.80">R$ 4.80</span>
+            </div>
+            <input type="number" min="0" value="0" class="qty">
+        </div>
+
+        <div class="item">
+            <img src="/./img/latte_love.png" alt="Latte Love">
+            <div class="item-info">
+                <h3>Latte Love</h3>
+                <span class="price" data-price="4.20">R$ 4.20</span>
+            </div>
+            <input type="number" min="0" value="0" class="qty">
+        </div>
+
+        <button id="confirmar">Confirmar Compra</button>
+    </div>
+
+    <script>
+        document.getElementById("confirmar").addEventListener("click", () => {
+            const items = [];
+            document.querySelectorAll(".item").forEach((el, idx) => {
+                const nome = el.querySelector("h3").innerText;
+                const preco = parseFloat(el.querySelector(".price").dataset.price);
+                const qtd = parseInt(el.querySelector(".qty").value);
+                if (qtd > 0) {
+                    items.push({ nome, quantidade: qtd, preco });
+                }
+            });
+
+            fetch("/pedido", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ itens: items })
+            }).then(r => alert("Pedido enviado!"))
+                .catch(e => alert("Erro ao enviar pedido"));
+        });
+    </script>
+</body>
+
+</html>

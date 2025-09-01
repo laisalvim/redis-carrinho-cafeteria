@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  cafe_redis:
+    image: redis:7.4.4-alpine3.21
+    container_name: cafe_redis
+    command: >
+      redis-server --port 6379 --appendonly yes
+    volumes:
+      - ./temp-redis:/data
+    ports:
+      - 6379:6379
